@@ -1,6 +1,6 @@
 version: 2.1
 orbs:
-  aws-ecr-eks: signavio/aws-ecr-eks@2.4.0
+  aws-eks: circleci/aws-eks@1.1.0
   kubernetes: circleci/kubernetes@0.4.0
   aws-ecr: circleci/aws-ecr@0.0.4
 
@@ -98,7 +98,7 @@ workflows:
   deployment:
     jobs:
       - install-eksctl
-      - aws-ecr-eks/create-cluster:
+      - aws-eks/create-cluster:
           cluster-name: my-eks-capstone
           requires:
             - install-eksctl
@@ -106,8 +106,8 @@ workflows:
       - test-cluster:
           cluster-name: my-eks-capstone
           requires:
-            - aws-ecr-eks/create-cluster
-      - aws-ecr-eks/delete-cluster:
+            - aws-eks/create-cluster
+      - aws-eks/delete-cluster:
           cluster-name: my-eks-capstone
           requires:
             - test-cluster
