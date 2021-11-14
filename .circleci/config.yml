@@ -37,7 +37,6 @@ jobs:
             . venv/bin/activate
             make lint
 
-
   docker_hub_build_push_image:
     docker:
       - image: circleci/node:13.8.0
