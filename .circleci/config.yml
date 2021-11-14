@@ -1,8 +1,9 @@
 version: 2.1
 orbs:
   eks: tiendanube/eks@1.8.0
-  kubernetes: circleci/kubernetes@0.4.0
+  k8s: circleci/kubernetes@0.7.0
   aws-ecr: circleci/aws-ecr@0.0.4
+  aws-cli: circleci/aws-cli@2.0.3
 
 jobs:
   build_test:
@@ -54,16 +55,24 @@ jobs:
             echo ${DOCKER_PWD} | docker login -u ${DOCKER_LOGIN} --password-stdin
             docker push ${DOCKER_LOGIN}/${IMAGE_NAME}
 
-  install-eksctl:
+
+  deploy-container-to-eks:
     docker:
       - image: circleci/node:13.8.0
     steps:
+      - checkout
+      - aws-cli/setup
+      - k8s/install-kubectl
+
       - run:
           name: Install ekstcl
           command: |
             curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
             sudo mv /tmp/eksctl /usr/local/bin
             eksctl version
+            aws version
+            kubectl version --short --client
+
 
   test-cluster:
     executor: aws-eks/python3
@@ -97,17 +106,4 @@ workflows:
             - build_test
   deployment:
     jobs:
-      - install-eksctl
-      - eks/create-cluster:
-          cluster-name: my-eks-capstone
-          requires:
-            - install-eksctl
-            
-      - test-cluster:
-          cluster-name: my-eks-capstone
-          requires:
-            - eks/create-cluster
-      - eks/delete-cluster:
-          cluster-name: my-eks-capstone
-          requires:
-            - test-cluster
+      - deploy-container-to-eks
