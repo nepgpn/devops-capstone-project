@@ -81,7 +81,6 @@ jobs:
             kubectl get services
           name: capstone cluster
 
-
 workflows:
   build_test_deploy:
     jobs:
