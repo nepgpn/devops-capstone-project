@@ -54,6 +54,23 @@ jobs:
             echo ${DOCKER_PWD} | docker login -u ${DOCKER_LOGIN} --password-stdin
             docker push ${DOCKER_LOGIN}/${IMAGE_NAME}
 
+  create-kubernetes-cluster:
+    executor: aws-eks/python3
+    parameters:
+      cluster-name:
+        description: |
+          Name of the EKS cluster
+        type: string
+    steps:
+      - kubernetes/install
+      - aws-eks/update-kubeconfig-with-authenticator:
+          cluster-name: << parameters.cluster-name >>
+      - run:
+          command: |
+            kubectl get services
+          name: capstone cluster
+
+
 workflows:
   build_test_deploy:
     jobs:
@@ -68,3 +85,15 @@ workflows:
           tag: ${CIRCLE_BUILD_NUM}
           requires:
             - build_test
+  deployment:
+    jobs:
+      - aws-eks/create-cluster:
+          cluster-name: my-eks-capstone
+      - test-cluster:
+          cluster-name: my-eks-capstone
+          requires:
+            - aws-eks/create-cluster
+      - aws-eks/delete-cluster:
+          cluster-name: my-eks-capstone
+          requires:
+            - test-cluster
