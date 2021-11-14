@@ -35,7 +35,8 @@ jobs:
           name: run lint
           command: |
             . venv/bin/activate
-            make lint
+          make lint
+
 
 
   docker_hub_build_push_image:
@@ -55,17 +56,48 @@ jobs:
             echo ${DOCKER_PWD} | docker login -u ${DOCKER_LOGIN} --password-stdin
             docker push ${DOCKER_LOGIN}/${IMAGE_NAME}
 
+  create-kubernetes-cluster:
+    executor: aws-eks/python3
+    parameters:
+      cluster-name:
+        description: |
+          Name of the EKS cluster
+        type: string
+    steps:
+      - kubernetes/install
+      - aws-eks/update-kubeconfig-with-authenticator:
+          cluster-name: << parameters.cluster-name >>
+      - run:
+          command: |
+            kubectl get services
+          name: capstone cluster
+
 workflows:
   default:
     jobs:
-      - build
+      - run-lint
+      - build_test
       - docker_hub_build_push_image:
           requires:
-            - build
+            - build_test
       - aws-ecr/build_and_push_image:
           region: us-east-2
           account-url: ${AWS_ECR_ACCOUNT_URL}
           repo: ${CIRCLE_PROJECT_REPONAME}
           tag: ${CIRCLE_BUILD_NUM}
           requires:
-            - build
+            - build_test
+
+  deployment:
+    jobs:
+      - aws-eks/create-cluster:
+          cluster-name: my-eks-demo
+      - test-cluster:
+          cluster-name: my-eks-demo
+          requires:
+            - aws-eks/create-cluster
+      - aws-eks/delete-cluster:
+          cluster-name: my-eks-demo
+          requires:
+            - test-cluster
+
