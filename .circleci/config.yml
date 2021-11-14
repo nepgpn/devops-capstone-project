@@ -101,8 +101,10 @@ workflows:
       - install-eksctl
       - aws-eks/create-cluster:
           cluster-name: my-eks-capstone
+          skip-kubectl-install: true
           requires:
             - install-eksctl
+            
       - test-cluster:
           cluster-name: my-eks-capstone
           requires:
