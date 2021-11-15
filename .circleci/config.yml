@@ -87,6 +87,7 @@ jobs:
       - k8s/install-kubectl
       - aws-cli/setup
       - run:
+          name: test-deployment
           command: |
             aws eks --region us-east-2 update-kubeconfig --name devops-capstone
             kubectl get svc
