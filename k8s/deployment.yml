@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: devops-capstone
-        image: rafaekhatri11/udacity-capstone-project-final:master
+        image: 019876704237.dkr.ecr.us-east-2.amazonaws.com/devops-capstone-project:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 80

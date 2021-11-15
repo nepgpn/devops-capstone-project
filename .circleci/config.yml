@@ -71,12 +71,7 @@ jobs:
             eksctl version
             aws --version
             kubectl version --short --client
-      
-      - run:
-          name: Create eks-cluster
-          command: |
-            eksctl create cluster --name devops-capstone --version 1.18 --region us-east-2 --nodegroup-name standard-workers --node-type t2.micro --nodes 2 --nodes-min 2 --nodes-max 3 --managed --zones us-east-2a,us-east-2b,us-east-2c
-
+            
       - run:
           name: Deploy To eks-cluster
           command: |
@@ -117,6 +112,8 @@ workflows:
           tag: latest
           requires:
             - build_test
-  deployment:
-    jobs:
+
       - deploy-container-to-eks
+          requires:
+              - aws-ecr/build_and_push_image
+      - test-cluster
