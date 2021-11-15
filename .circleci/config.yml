@@ -104,7 +104,7 @@ jobs:
       - run:
           command: |
             aws eks --region us-east-2 update-kubeconfig --name devops-capstone
-            kubectl rollout restart deployment udacity-capstone
+            kubectl rollout restart deployment devops-capstone
             kubectl get svc
             kubectl get nodes
             kubectl get deployment
