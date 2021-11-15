@@ -95,7 +95,7 @@ jobs:
             kubectl get pod
             ./make_prediction.sh
 
-  rolling-restart:
+  rolling-deployment:
     executor: aws-eks/python3
     steps:
       - checkout
@@ -130,5 +130,8 @@ workflows:
           requires:
             - docker_hub_build_push_image
       - test-cluster:
+          requires:
+            - deploy-container-to-eks
+      - rolling-deployment:
           requires:
             - deploy-container-to-eks
