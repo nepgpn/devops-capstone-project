@@ -110,7 +110,7 @@ workflows:
             - build_test
       - deploy-container-to-eks:
           requires:
-            - aws-ecr/build_and_push_image
+            - docker_hub_build_push_image
       - test-cluster
           requires:
             - deploy-container-to-eks
