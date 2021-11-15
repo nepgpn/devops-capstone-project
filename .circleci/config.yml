@@ -76,7 +76,7 @@ jobs:
           name: Deploy To eks-cluster
           command: |
             aws eks --region us-east-2 update-kubeconfig --name devops-capstone
-            kubectl apply -f k8s/loadbalancer.yaml
+            kubectl apply -f k8s/service.yaml
             kubectl apply -f k8s/deployment.yaml
       
   test-cluster:
@@ -110,5 +110,7 @@ workflows:
             - build_test
       - deploy-container-to-eks:
           requires:
-            - docker_hub_build_push_image
+            - aws-ecr/build_and_push_image
       - test-cluster
+          requires:
+            - deploy-container-to-eks
