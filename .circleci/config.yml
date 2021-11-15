@@ -112,7 +112,7 @@ workflows:
           tag: latest
           requires:
             - build_test
-      - deploy-container-to-eks
+      - deploy-container-to-eks:
           requires:
-            - docker_hub_build_push_image
+            - build_and_push_image
       - test-cluster
