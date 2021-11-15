@@ -111,6 +111,6 @@ workflows:
       - deploy-container-to-eks:
           requires:
             - docker_hub_build_push_image
-      - test-cluster
+      - test-cluster:
           requires:
             - deploy-container-to-eks
