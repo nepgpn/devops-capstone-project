@@ -76,8 +76,8 @@ jobs:
           name: Deploy To eks-cluster
           command: |
             aws eks --region us-east-2 update-kubeconfig --name devops-capstone
-            kubectl apply -f k8s/service.yaml
-            kubectl apply -f k8s/deployment.yaml
+            kubectl apply -f k8s/service.yml
+            kubectl apply -f k8s/deployment.yml
       
   test-cluster:
     executor: aws-eks/python3
