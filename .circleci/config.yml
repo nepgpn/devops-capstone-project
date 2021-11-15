@@ -63,17 +63,20 @@ jobs:
       - checkout
       - aws-cli/setup
       - k8s/install-kubectl
-
       - run:
           name: Install ekstcl
           command: |
             curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
             sudo mv /tmp/eksctl /usr/local/bin
             eksctl version
-            aws version
+            aws --version
             kubectl version --short --client
-
-
+      
+      - run:
+          name: Create eks-cluster
+          command: |
+            eksctl create cluster --name devops-capstone --version 1.18 --region us-east-2 --nodegroup-name standard-workers --node-type t2.micro --nodes 2 --nodes-min 2 --nodes-max 3 --managed --zones us-east-2a,us-east-2b,us-east-2c
+      
   test-cluster:
     executor: aws-eks/python3
     parameters:
