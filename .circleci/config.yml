@@ -115,4 +115,5 @@ workflows:
       - deploy-container-to-eks:
           requires:
             - build_and_push_image
-      - test-cluster
+      - test-cluster:
+        cluster-name: devops-capstone
