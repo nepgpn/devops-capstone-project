@@ -6,7 +6,7 @@
 ## About The Project
 
 This project is a capstone project for AWS UDACITY devops nano-degree program.
-In this project, it is required to apply the skills and knowledge obtained from the program, which includes:
+These are the main skills involved for the projects.
 1. Worked with AWS
 2. Used CircleCI for CI/CD pipeline
 4. Used Ansible and CloudFormation to deploy clusters

@@ -48,7 +48,7 @@ jobs:
       - run:
           name: Build and push Docker image to Docker Hub
           command: |
-            echo 'export TAG=latest' >> ${BASH_ENV}
+            echo 'export TAG=${CIRCLE_BUILD_NUM}' >> ${BASH_ENV}
             echo 'export IMAGE_NAME=${CIRCLE_PROJECT_REPONAME}' >> ${BASH_ENV}
             source ${BASH_ENV}
             docker build -t ${DOCKER_LOGIN}/${IMAGE_NAME} -t ${DOCKER_LOGIN}/${IMAGE_NAME}:${TAG} .
@@ -123,7 +123,7 @@ workflows:
           region: us-east-2
           account-url: ${AWS_ECR_ACCOUNT_URL}
           repo: ${CIRCLE_PROJECT_REPONAME}
-          tag: latest
+          tag: ${CIRCLE_BUILD_NUM}
           requires:
             - build_test
       - deploy-container-to-eks:
@@ -134,4 +134,4 @@ workflows:
             - deploy-container-to-eks
       - rolling-deployment:
           requires:
-            - deploy-container-to-eks
+            - test-cluster
