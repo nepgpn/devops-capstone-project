@@ -1,6 +1,6 @@
 version: 2.1
 orbs:
-  eks: tiendanube/eks@1.8.0
+  aws-eks: circleci/aws-eks@0.2.3
   k8s: circleci/kubernetes@0.7.0
   aws-ecr: circleci/aws-ecr@0.0.4
   aws-cli: circleci/aws-cli@2.0.3
@@ -48,7 +48,7 @@ jobs:
       - run:
           name: Build and push Docker image to Docker Hub
           command: |
-            echo 'export TAG=0.1.${CIRCLE_BUILD_NUM}' >> ${BASH_ENV}
+            echo 'export TAG=latest' >> ${BASH_ENV}
             echo 'export IMAGE_NAME=${CIRCLE_PROJECT_REPONAME}' >> ${BASH_ENV}
             source ${BASH_ENV}
             docker build -t ${DOCKER_LOGIN}/${IMAGE_NAME} -t ${DOCKER_LOGIN}/${IMAGE_NAME}:${TAG} .
@@ -76,6 +76,13 @@ jobs:
           name: Create eks-cluster
           command: |
             eksctl create cluster --name devops-capstone --version 1.18 --region us-east-2 --nodegroup-name standard-workers --node-type t2.micro --nodes 2 --nodes-min 2 --nodes-max 3 --managed --zones us-east-2a,us-east-2b,us-east-2c
+
+      - run:
+          name: Deploy To eks-cluster
+          command: |
+            aws eks --region us-east-2 update-kubeconfig --name devops-capstone
+            kubectl apply -f k8s/loadbalancer.yaml
+            kubectl apply -f k8s/deployment.yaml
       
   test-cluster:
     executor: aws-eks/python3
@@ -85,13 +92,16 @@ jobs:
           Name of the EKS cluster
         type: string
     steps:
-      - kubernetes/install
+      - k8s/install-kubectl
       - aws-eks/update-kubeconfig-with-authenticator:
           cluster-name: << parameters.cluster-name >>
       - run:
           command: |
-            kubectl get services
-          name: capstone cluster
+            kubectl get svc
+            kubectl get nodes
+            kubectl get deployment
+            kubectl get pod
+          name: devops-capstone
 
 workflows:
   build_test_deploy:
@@ -104,7 +114,7 @@ workflows:
           region: us-east-2
           account-url: ${AWS_ECR_ACCOUNT_URL}
           repo: ${CIRCLE_PROJECT_REPONAME}
-          tag: ${CIRCLE_BUILD_NUM}
+          tag: latest
           requires:
             - build_test
   deployment:
