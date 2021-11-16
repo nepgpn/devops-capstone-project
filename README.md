@@ -1,5 +1,4 @@
 [![CircleCI](https://circleci.com/gh/nepgpn/devops-capstone-project/tree/main.svg?style=svg)](https://circleci.com/gh/nepgpn/devops-capstone-project/tree/main)
-
 ##Project Overview
 <h1 >Cloud DevOps Engineer Nanodegree by Udacity: Capstone Project</h1>
 
