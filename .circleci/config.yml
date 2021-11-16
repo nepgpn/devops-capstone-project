@@ -74,11 +74,11 @@ jobs:
       - run:
           name: Create eks-cluster
           command: |
-            eksctl create cluster --name devops-capstone1 --version 1.18 --region us-east-2 --nodegroup-name standard-workers --node-type t2.micro --nodes 3 --nodes-min 2 --nodes-max 4 --managed --zones us-east-2a,us-east-2b,us-east-2c     
+            eksctl create cluster --name udacity-devops-capstone --version 1.18 --region us-east-2 --nodegroup-name standard-workers --node-type t2.micro --nodes 3 --nodes-min 2 --nodes-max 4 --managed --zones us-east-2a,us-east-2b,us-east-2c     
       - run:
           name: Deploy To eks-cluster
           command: |
-            aws eks --region us-east-2 update-kubeconfig --name devops-capstone1
+            aws eks --region us-east-2 update-kubeconfig --name udacity-devops-capstone
             kubectl apply -f k8s/service.yml
             kubectl apply -f k8s/deployment.yml
       
@@ -92,9 +92,9 @@ jobs:
       - run:
           name: test-deployment
           command: |
-            aws eks --region us-east-2 update-kubeconfig --name devops-capstone1
+            aws eks --region us-east-2 update-kubeconfig --name udacity-devops-capstone
             kubectl get svc
-            kubectl get nodess
+            kubectl get nodes
             kubectl get deployment
             kubectl get pod
             ./make_prediction.sh
@@ -107,8 +107,8 @@ jobs:
       - aws-cli/setup
       - run:
           command: |
-            aws eks --region us-east-2 update-kubeconfig --name devops-capstone1
-            kubectl rollout restart deployment devops-capstone
+            aws eks --region us-east-2 update-kubeconfig --name udacity-devops-capstone
+            kubectl rollout restart deployment udacity-devops-capstone
             kubectl get svc
             kubectl get nodes
             kubectl get deployment
