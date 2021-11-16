@@ -115,7 +115,6 @@ jobs:
             kubectl get pod
             ./make_prediction.sh
          
-
 workflows:
   build_test_deploy:
     jobs:
@@ -126,7 +125,7 @@ workflows:
       - aws-ecr/build_and_push_image:
           region: us-east-2
           account-url: ${AWS_ECR_ACCOUNT_URL}
-          repo: ${CIRCLE_PROJECT_REPONAME}
+          repo: ${CIRCLE_PROJECT_REPONAME}x
           tag: ${CIRCLE_BUILD_NUM}
           requires:
             - build_test
